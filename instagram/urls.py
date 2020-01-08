@@ -1,4 +1,5 @@
 from django.urls import path, include
+from instagram.views import PostLikeToggle, PostLikeAPIToggle
 from . import views
 
 urlpatterns = [
@@ -12,4 +13,6 @@ urlpatterns = [
     path('api/post/<id>/like', PostLikeAPIToggle.as_view(), name='liked-api'),
     path('like', views.like_post, name='like_post'),
     path('search/', views.search_profile, name='search'),
+    path('unfollow/<to_unfollow>', views.unfollow, name='unfollow'),
+    path('follow/<to_follow>', views.follow, name='follow')
 ]
