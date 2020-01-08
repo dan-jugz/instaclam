@@ -16,6 +16,26 @@ class Profile(models.Model):
         return f'{self.user.username} Profile'
 
 
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+
+    def save_profile(self):
+        self.user
+
+    def delete_profile(self):
+        self.delete()
+
+    @classmethod
+    def search_profile(cls, name):
+        return cls.objects.filter(user__username__icontains=name).all()
+
+
 
 class Post(models.Model):
     image = models.ImageField(upload_to='posts/')
@@ -30,6 +50,23 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return f"/post/{self.id}"
+
+
+    @property
+    def get_all_comments(self):
+        return self.comments.all()
+
+    def save_image(self):
+        self.save()
+
+    def delete_image(self):
+        self.delete()
+
+    def total_likes(self):
+        return self.likes.count()
+
+    def __str__(self):
+        return f'{self.user.name} Post'
 
 
 class Comment(models.Model):
