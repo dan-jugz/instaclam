@@ -119,6 +119,21 @@ def post_comment(request, id):
 
 
 
+class PostLikeToggle(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        id = self.kwargs.get('id')
+        print(id)
+        obj = get_object_or_404(Post, pk=id)
+        url_ = obj.get_absolute_url()
+        user = self.request.user
+        if user in obj.likes.all():
+            obj.likes.remove(user)
+        else:
+            obj.likes.add(user)
+        return url_
+
+
+
 def like_post(request):
     image = get_object_or_404(Post, id=request.POST.get('id'))
     is_liked = False
