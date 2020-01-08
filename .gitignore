@@ -1,0 +1,6 @@
+*.pyc
+ven/
+migrations/
+.vscode/
+db.sqlite3
+.env
