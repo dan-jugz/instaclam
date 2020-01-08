@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UpdateUserForm, UpdateUserProfileForm, PostForm, CommentForm
 from django.contrib.auth import login, authenticate
@@ -21,10 +22,24 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
-    
+
+@login_required(login_url='login')
 def index(request):
     images = Post.objects.all()
+    users = User.objects.exclude(id=request.user.id)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user.profile
+            post.save()
+            return HttpResponseRedirect(request.path_info)
+    else:
+        form = PostForm()
     params = {
         'images': images,
+        'form': form,
+        'users': users,
+
     }
-    return render(request, 'instagram/index.html', params)   
+    return render(request, 'instagram/index.html', params)
